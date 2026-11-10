@@ -52,7 +52,7 @@
 
   const COURSE = window.NEUROCAMPUS;
   if (!COURSE) {
-    $app.innerHTML = "<p style='padding:40px'>Не загрузился файл программы. Проверьте content/course.js</p>";
+    $app.innerHTML = "<p style='padding:40px'>Не загрузился файл программы. Обновите страницу, и если ошибка останется — напишите нам.</p>";
     return;
   }
 
@@ -149,8 +149,16 @@
   }
 
 
+  function foundationModules() {
+    return COURSE.modules.filter((m) => m.track === "foundation" || (!m.track && (m.part === "A" || m.id === "sites-cycle")));
+  }
+
+  function practiceModules() {
+    return COURSE.modules.filter((m) => m.track === "practice" || m.part === "C");
+  }
+
   function trackModules() {
-    return COURSE.modules.filter((m) => m.part === "A" || m.id === "sites-cycle");
+    return foundationModules();
   }
 
   function moduleState(mod) {
@@ -172,24 +180,47 @@
       prompts: "Промпты",
       github: "GitHub",
       "sites-start": "Первые шаги",
-      "sites-cycle": "Полный цикл"
+      "sites-cycle": "Полный цикл",
+      access: "Доступ",
+      work: "Работа и учёба",
+      images: "Изображения",
+      video: "Видео и звук",
+      automation: "Автоматизация",
+      "sites-law": "Сайт и закон",
+      money: "Заработок",
+      project30: "Проект 30 дней"
     })[m.id] || m.title;
   }
 
-  function renderPath() {
-    const mods = trackModules();
+  function renderPathRail(mods, startAt, label) {
     const next = firstUndone();
     return `
-      <ol class="path-rail" aria-label="Путь по курсу">
+      <ol class="path-rail" aria-label="${esc(label)}">
         ${mods.map((m, i) => {
           const st = moduleState(m);
           const ready = m.lessons.filter((l) => l.status === "ready");
           const href = st === "soon" ? "#/course" : (next && m.lessons.some((l) => l.id === next.id) ? "#/lesson/" + next.id : "#/course");
           const done = ready.filter((l) => lessonState(l.id).done).length;
           const sub = st === "current" ? "вы здесь" : (ready.length ? (done + " / " + ready.length) : "скоро");
-          return `<li class="${st}"><a href="${href}"><span class="path-dot">${i + 1}</span><span class="path-label">${esc(moduleShort(m))}</span><span class="path-sub">${sub}</span></a></li>`;
+          return `<li class="${st}"><a href="${href}"><span class="path-dot">${startAt + i + 1}</span><span class="path-label">${esc(moduleShort(m))}</span><span class="path-sub">${sub}</span></a></li>`;
         }).join("")}
       </ol>`;
+  }
+
+  function renderPath() {
+    const first = foundationModules();
+    const second = practiceModules();
+    return `
+      <div class="path-groups">
+        <div class="path-group">
+          <div class="path-group-head"><p class="kicker">Фундамент и сайт</p><p>Модули 1–${first.length}</p></div>
+          ${renderPathRail(first, 0, "Фундамент и сайт")}
+        </div>
+        <div class="path-group">
+          <div class="path-group-head"><p class="kicker">Практика и проект</p><p>Модули ${first.length + 1}–${first.length + second.length}</p></div>
+          ${renderPathRail(second, first.length, "Практика и проект")}
+        </div>
+      </div>`;
   }
 
   function progressRing(pct) {
@@ -309,13 +340,24 @@
         <div class="wrap">
           <div class="section-head">
             <p class="kicker">Путь курса</p>
-            <h2>Семь модулей: фундамент и полный цикл сайта</h2>
-            <p class="lede">Сначала основы ИИ, запросы, Grok, Grok Bot, Claude Code и GitHub. Затем вы собираете учебный сайт — от карты страниц до передачи работы. Следующие темы собраны внизу в блоке «Скоро», без пустых страниц.</p>
+            <h2>Пятнадцать модулей: фундамент, сайт и практика</h2>
+            <p class="lede">Сначала основы ИИ, запросы, Grok, Grok Bot, Claude Code, GitHub и полный цикл учебного сайта. Затем — официальный доступ, работа и учёба, изображения, видео, автоматизация, закон, заработок и проект на 30 дней. Все модули уже с конспектом и заданием, без пустых страниц.</p>
           </div>
+          <h3 class="path-block-title">Фундамент и сайт</h3>
           <div class="grid-3">
             ${modulesReady.map((m, i) => `
               <a class="card path-card" href="#/course">
                 <div class="n"><em>${i + 1}</em> Модуль ${i + 1}</div>
+                <h3>${esc(m.title)}</h3>
+                <p>${esc(m.subtitle)}</p>
+                <p class="meta">${lessonsWord(m.lessons.filter((l) => l.status === "ready").length)} · готовы</p>
+              </a>`).join("")}
+          </div>
+          <h3 class="path-block-title" style="margin-top:36px">Практика и проект</h3>
+          <div class="grid-3">
+            ${practiceModules().map((m, i) => `
+              <a class="card path-card" href="#/course">
+                <div class="n"><em>${modulesReady.length + i + 1}</em> Модуль ${modulesReady.length + i + 1}</div>
                 <h3>${esc(m.title)}</h3>
                 <p>${esc(m.subtitle)}</p>
                 <p class="meta">${lessonsWord(m.lessons.filter((l) => l.status === "ready").length)} · готовы</p>
@@ -392,19 +434,25 @@
             <div class="module-body">${lessonRows(m)}</div>
           </details>
         `).join("")}
-        ${renderComingSoon()}
+        <h2 style="margin-top:36px">Практика и проект</h2>
+        ${practiceModules().map((m) => `
+          <details class="module" ${(firstUndone() && m.lessons.some((l) => l.id === firstUndone().id)) ? "open" : ""}>
+            <summary><span>${esc(m.title)}</span><span class="meta">${moduleDoneMeta(m)}</span></summary>
+            <div class="module-body">${lessonRows(m)}</div>
+          </details>
+        `).join("")}
         <p style="margin-top:28px"><button class="btn btn-ghost" type="button" data-action="reset">Сбросить прогресс</button></p>
       </div>
     `);
   }
 
   function renderProgram() {
-    const nums = Object.fromEntries(trackModules().map((m, i) => [m.id, i + 1]));
+    const nums = Object.fromEntries(COURSE.modules.map((m, i) => [m.id, i + 1]));
     return shell("program", `
       <div class="wrap page">
         <p class="kicker">Вся программа</p>
         <h1>Путь по курсу</h1>
-        <p class="lede">Сначала фундамент и полный цикл сайта — эти уроки уже с конспектом, схемой и заданием. Идите по порядку: так меньше путаницы. Следующие темы — в конце страницы, без пустых уроков.</p>
+        <p class="lede">Пятнадцать модулей уже с конспектом, схемой и заданием. Сначала фундамент и полный цикл сайта, затем практика, заработок и учебный проект. Идите по порядку: так меньше путаницы. Пустых уроков в программе нет.</p>
         ${COURSE.modules.map((m) => `
           <section style="margin:0 0 28px">
             <h2>${nums[m.id] ? "Модуль " + nums[m.id] + ". " : ""}${esc(m.title)}</h2>
@@ -412,7 +460,6 @@
             <div class="card" style="padding:0">${lessonRows(m)}</div>
           </section>
         `).join("")}
-        ${renderComingSoon()}
       </div>
     `);
   }

@@ -52,14 +52,29 @@ a:hover { color: var(--forest-hover); }
 .skip-link {
   position: absolute;
   left: 12px;
-  top: -40px;
+  top: 12px;
+  z-index: 200;
   background: var(--ink);
   color: var(--paper);
   padding: 8px 12px;
   border-radius: 8px;
-  z-index: 100;
+  /* Fully clipped until keyboard focus — a negative top left a 2px ink sliver. */
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
 }
-.skip-link:focus { top: 12px; }
+.skip-link:focus,
+.skip-link:focus-visible {
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  white-space: normal;
+  pointer-events: auto;
+}
 
 /* Header */
 .site-header {
@@ -699,11 +714,26 @@ body {
 .hero-stage .hero-card { padding: 20px 22px 22px; }
 
 .path-section { padding: 12px 0 8px; overflow-x: clip; }
+.path-groups { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 100%; }
+.path-group { min-width: 0; width: 100%; }
+.path-group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 0 2px 2px; }
+.path-group-head .kicker { margin: 0; }
+.path-group-head p { margin: 0; font-size: 13px; color: var(--muted); }
+.path-block-title {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+}
+
 #video, #notes, #task, #check, #notebook-box { scroll-margin-top: calc(var(--header-h) + 56px); }
 .path-rail {
   list-style: none;
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   gap: 0;
   overflow-x: auto;
