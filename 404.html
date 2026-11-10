@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="robots" content="noindex">
+  <title>Нейрокампус — курс Дмитрия Чекмарёва</title>
+  <script>
+    (function () {
+      var prefix = "/neurocampus";
+      var path = location.pathname;
+      var i = path.indexOf(prefix);
+      if (i === -1) return;
+      var rest = path.slice(i + prefix.length).replace(/^\/+/, "").replace(/\/+$/, "");
+      if (rest && rest !== "index.html" && rest !== "404.html") {
+        location.replace(prefix + "/#/" + decodeURIComponent(rest) + location.search);
+      }
+    })();
+  </script>
+
+  <meta name="description" content="Онлайн-курс по ИИ и созданию сайтов для студентов и всех, кто учится самостоятельно. Grok, Grok Bot и Claude Code. Дмитрий Чекмарёв, Smart Agent AI.">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">К содержанию</a>
+  <div id="app"></div>
+  <script src="course.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
