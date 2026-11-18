@@ -133,7 +133,7 @@ code{background:var(--card2);padding:8px 10px;border-radius:10px;display:block;w
 <!-- КЛУБ -->
 <section class="page" id="p-club"><div class="wrap">
   <div class="club">
-    <span class="pill">💎 Скоро открытие</span>
+    <span class="pill">💎 Клуб открыт</span>
     <h1 style="font-size:26px;margin:12px 0 6px">Smart Agent Club</h1>
     <div class="muted">Сообщество тех, кто не читает про ИИ, а внедряет его руками и зарабатывает.</div>
     <div style="margin-top:14px">
@@ -146,9 +146,9 @@ code{background:var(--card2);padding:8px 10px;border-radius:10px;display:block;w
     </div>
   </div>
   <div class="card" style="margin-top:12px">
-    <b>🔥 Первым участникам спеццена</b>
-    <div class="small muted">Запишись в лист ожидания. Как только откроем, пришлём личное приглашение и цену для первых.</div>
-    <div style="margin-top:12px"><button class="btn gold" id="club-btn" onclick="clubWait()">✋ Хочу в клуб</button></div>
+    <b>🔥 Цена для первых участников</b>
+    <div class="small muted"><span id="club-price">690</span> ⭐ в месяц. Оплата Звёздами прямо в Telegram, доступ открывается сразу. Отменить можно в любой момент.</div>
+    <div style="margin-top:12px"><button class="btn gold" id="club-btn" onclick="clubWait()">💎 Вступить в клуб</button></div>
   </div>
 </div></section>
 
@@ -288,10 +288,13 @@ function leadForm(p){
   };
 }
 async function clubWait(){
-  haptic("medium"); $("club-btn").disabled = true;
+  haptic("medium");
+  if (D.me.club_link) { api("club"); return tgLink(D.me.club_link); }
+  $("club-btn").disabled = true;
   const r = await api("club");
-  if (r.ok) { D.me.in_club_wait = true; render(); toast("✅ Ты в листе ожидания клуба!"); }
-  else { $("club-btn").disabled=false; toast(r.error||"Ошибка"); }
+  $("club-btn").disabled = false;
+  if (r.ok && r.link) { D.me.club_link = r.link; tgLink(r.link); }
+  else toast(r.error||"Ссылка отправлена в чат с ботом");
 }
 function share(){
   const u = D.me.ref_link, t = "Забирай бесплатные подарки по ИИ для бизнеса от Smart Agent AI 🎁";
@@ -321,7 +324,7 @@ function render(){
   if (n>=g) $("me-sub").textContent = "🔓 Бонус за друзей открыт, забери в боте";
   const own = P.filter(p=>p.owned);
   if (own.length) $("owned").innerHTML = own.map(card).join("");
-  if (D.me.in_club_wait) { $("club-btn").textContent = "✅ Ты в листе ожидания"; $("club-btn").disabled = true; }
+  if (D.me.club_price) $("club-price").textContent = D.me.club_price;
 }
 
 (async function init(){
