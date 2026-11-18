@@ -299,7 +299,7 @@ function share(){
 }
 function copyRef(){ navigator.clipboard?.writeText(D.me.ref_link).then(()=>toast("📋 Ссылка скопирована")).catch(()=>toast(D.me.ref_link)); }
 
-const CAT_NAMES = { all:"Все" };
+const CAT_NAMES = { all:"Все", course:"🎓 Курсы", pack:"📚 Пакеты", agent:"🤖 Агенты", guide:"🗺 Гайды", service:"🛠 Под ключ" };
 function render(){
   const P = D.products;
   $("s-gifts").textContent = D.gifts.length + P.filter(p=>p.access==="free_sub").length;
