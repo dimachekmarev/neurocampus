@@ -146,8 +146,7 @@ code{background:var(--card2);padding:8px 10px;border-radius:10px;display:block;w
     </div>
   </div>
   <div class="card" style="margin-top:12px">
-    <b>🔥 Цена для первых участников</b>
-    <div class="small muted"><span id="club-price">690</span> ⭐ в месяц. Оплата Звёздами прямо в Telegram, доступ открывается сразу. Отменить можно в любой момент.</div>
+    <div class="small" id="club-offer"><b>🎁 Первые 50 участников заходят бесплатно навсегда.</b> Дальше вход по подписке 690 ⭐ в месяц.</div>
     <div style="margin-top:12px"><button class="btn gold" id="club-btn" onclick="clubWait()">💎 Вступить в клуб</button></div>
   </div>
 </div></section>
@@ -324,7 +323,8 @@ function render(){
   if (n>=g) $("me-sub").textContent = "🔓 Бонус за друзей открыт, забери в боте";
   const own = P.filter(p=>p.owned);
   if (own.length) $("owned").innerHTML = own.map(card).join("");
-  if (D.me.club_price) $("club-price").textContent = D.me.club_price;
+  if (D.me.club_offer) $("club-offer").innerHTML = D.me.club_offer.replace(/<(?!\/?b>)[^>]*>/g, "").replace(/\s*👇\s*$/, "");
+  $("club-btn").textContent = D.me.club_free_left > 0 ? "🎁 Вступить бесплатно" : "💎 Вступить в клуб";
 }
 
 (async function init(){
