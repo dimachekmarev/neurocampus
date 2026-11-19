@@ -123,6 +123,7 @@
             <span></span>
           </button>
           <nav class="nav" aria-label="Разделы">
+            <a href="products/">Продукты и практикумы</a>
             <a href="#/course" ${active === "course" ? 'aria-current="page"' : ""}>Курс</a>
             <a href="#/program" ${active === "program" ? 'aria-current="page"' : ""}>Программа</a>
             <a href="#/glossary" ${active === "glossary" ? 'aria-current="page"' : ""}>Словарь</a>
