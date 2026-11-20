@@ -124,6 +124,7 @@
           </button>
           <nav class="nav" aria-label="Разделы">
             <a href="products/">Продукты и практикумы</a>
+            <a href="https://smart-agent-ai.ru/">На сайт Smart Agent AI</a>
             <a href="#/course" ${active === "course" ? 'aria-current="page"' : ""}>Курс</a>
             <a href="#/program" ${active === "program" ? 'aria-current="page"' : ""}>Программа</a>
             <a href="#/glossary" ${active === "glossary" ? 'aria-current="page"' : ""}>Словарь</a>
@@ -139,7 +140,7 @@
     return `
       <footer class="site-footer">
         <div class="footer-inner">
-          <div>Нейрокампус · Дмитрий Чекмарёв · <a href="https://smart-agent-ai.ru" target="_blank" rel="noopener">Smart Agent AI</a></div>
+          <div>Нейрокампус · Дмитрий Чекмарёв · <a href="https://smart-agent-ai.ru/">На сайт Smart Agent AI</a></div>
           <div>Предварительная сборка, без оплаты на этой странице</div>
         </div>
       </footer>`;
